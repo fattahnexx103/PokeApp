@@ -6,14 +6,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 import apps.android.fattahnexx103.pokeapp.R
-import apps.android.fattahnexx103.pokeapp.model.Forms
-import apps.android.fattahnexx103.pokeapp.model.PokedexModel
-import apps.android.fattahnexx103.pokeapp.model.Results
+import apps.android.fattahnexx103.pokeapp.model.*
 import apps.android.fattahnexx103.pokeapp.viewModel.PokedexViewModel
 import kotlinx.android.synthetic.main.fragment_pokedex.*
 
@@ -21,21 +21,26 @@ import kotlinx.android.synthetic.main.fragment_pokedex.*
 class PokedexFragment : Fragment() {
 
     private lateinit var viewModel: PokedexViewModel
-    private val listAdapter  = PokedexListAdapter(arrayListOf())
+    private var listAdapter  = PokedexListAdapter(arrayListOf())
+    private var counter = 1
 
-    private val listNamesObserver = Observer<List<Forms>>{ list ->
-        list?.let{
+    private val pokemonObserver = Observer<PokeemonModel>{
+        if(it != null){
             listAdapter.updateNameList(it)
         }
     }
 
-//    private val listOsbserver = Observer<List<Results>>{
-//        it?.let {
-//            pokedex_recyclerView.visibility = View.VISIBLE
-//            listAdapter.updateList(it)
-//        }
-//    }
+    private val listNamesObserver = Observer<List<Forms>>{ list ->
+        list?.let{
+            //listAdapter.updateNameList(it)
+        }
+    }
 
+    private val listAbilitiesObserver = Observer<List<Abilities>>{ list ->
+        list?.let{
+            //listAdapter.updateAbilitiesList(it)
+        }
+    }
     private val loadingObserver = Observer<Boolean>{isLoading ->
         if(isLoading){
             loading_progressbar.visibility = View.VISIBLE
@@ -55,6 +60,8 @@ class PokedexFragment : Fragment() {
         }
     }
 
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -73,14 +80,31 @@ class PokedexFragment : Fragment() {
         viewModel.pokemonNamesList.observe(this,listNamesObserver )
         viewModel.loading.observe(this,loadingObserver )
         viewModel.loadingError.observe(this, listErrorObserver)
-        //viewModel.pokemonList.observe(this, listOsbserver)
-        viewModel.refresh()
+        viewModel.pokemonAbilitiesList.observe(this,listAbilitiesObserver)
+        viewModel.pokemonData.observe(this,pokemonObserver)
+        viewModel.refresh(counter)
 
         //configure recyclerview
         pokedex_recyclerView.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = listAdapter
         }
+
+        pokedex_recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+
+                if(!recyclerView.canScrollVertically(1)){
+                    Toast.makeText(context, "Last", Toast.LENGTH_LONG).show()
+                    counter+=19
+                    viewModel.refresh(counter)
+                }
+            }
+        })
+
+
+
     }
 
 

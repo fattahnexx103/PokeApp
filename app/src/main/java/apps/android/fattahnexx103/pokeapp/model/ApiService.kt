@@ -18,9 +18,6 @@ class ApiService {
         .build()
         .create(RetrofitApi::class.java)
 
-    fun getPokedex(): Single<PokedexModel> {
-        return api.getPokedex() // get the result object
-    }
 
     fun getPokemon(number: Int): Single<PokeemonModel>{
         return api.getPokemon(number.toString())

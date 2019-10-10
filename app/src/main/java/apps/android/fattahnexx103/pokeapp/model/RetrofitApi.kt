@@ -6,8 +6,6 @@ import retrofit2.http.Path
 
 interface RetrofitApi {
 
-    @GET("/api/v2/pokemon")
-    fun getPokedex(): Single<PokedexModel>
 
     @GET("/api/v2/pokemon/{pokeNumber}")
     fun getPokemon(@Path("pokeNumber")pokenumber: String): Single<PokeemonModel>

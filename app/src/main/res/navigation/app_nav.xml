@@ -11,5 +11,6 @@
     <fragment android:id="@+id/pokemonFragment" android:name="apps.android.fattahnexx103.pokeapp.view.PokemonFragment"
               android:label="fragment_pokemon" tools:layout="@layout/fragment_pokemon">
         <action android:id="@+id/action_pokemonFragment_to_pokedexFragment" app:destination="@id/pokedexFragment"/>
+        <argument android:name="pokemon" app:argType="apps.android.fattahnexx103.pokeapp.model.PokeemonModel"/>
     </fragment>
 </navigation>
