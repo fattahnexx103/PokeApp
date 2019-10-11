@@ -10,20 +10,24 @@ data class PokeemonModel(
 
     @SerializedName("abilities")
     val abilities: List<Abilities>?,
-    val forms: List<Forms>?,
+    val name: String?,
+    @SerializedName("stats")
+    val stats: List<Stats>?,
     @SerializedName("sprites")
     val sprites: Sprites?
 ): Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.createTypedArrayList(Abilities),
-        parcel.createTypedArrayList(Forms),
+        parcel.readString(),
+        parcel.createTypedArrayList(Stats),
         parcel.readParcelable(Sprites::class.java.classLoader)
     ) {
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeTypedList(abilities)
-        parcel.writeTypedList(forms)
+        parcel.writeString(name)
+        parcel.writeTypedList(stats)
         parcel.writeParcelable(sprites, flags)
     }
 
@@ -41,6 +45,7 @@ data class PokeemonModel(
         }
     }
 }
+
 
 data class Abilities(
     @SerializedName("ability")
@@ -93,9 +98,40 @@ data class Ability(
     }
 }
 
-data class Forms(
+data class Stats(
+    val base_stat: String?,
+    @SerializedName("stat")
+    val stat: Stat?
+): Parcelable {
+    constructor(parcel: Parcel) : this(
+        parcel.readString(),
+        parcel.readParcelable(Stat::class.java.classLoader)
+    ) {
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(base_stat)
+        parcel.writeParcelable(stat, flags)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<Stats> {
+        override fun createFromParcel(parcel: Parcel): Stats {
+            return Stats(parcel)
+        }
+
+        override fun newArray(size: Int): Array<Stats?> {
+            return arrayOfNulls(size)
+        }
+    }
+}
+
+data class Stat(
     val name: String?,
-    val uri: String?
+    val url: String?
 ): Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString(),
@@ -105,23 +141,25 @@ data class Forms(
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(name)
-        parcel.writeString(uri)
+        parcel.writeString(url)
     }
 
     override fun describeContents(): Int {
         return 0
     }
 
-    companion object CREATOR : Parcelable.Creator<Forms> {
-        override fun createFromParcel(parcel: Parcel): Forms {
-            return Forms(parcel)
+    companion object CREATOR : Parcelable.Creator<Stat> {
+        override fun createFromParcel(parcel: Parcel): Stat {
+            return Stat(parcel)
         }
 
-        override fun newArray(size: Int): Array<Forms?> {
+        override fun newArray(size: Int): Array<Stat?> {
             return arrayOfNulls(size)
         }
     }
 }
+
+
 
 data class Sprites(
     val back_default: String?

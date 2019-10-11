@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 import apps.android.fattahnexx103.pokeapp.R
+import apps.android.fattahnexx103.pokeapp.adapters.PokedexListAdapter
 import apps.android.fattahnexx103.pokeapp.model.*
 import apps.android.fattahnexx103.pokeapp.viewModel.PokedexViewModel
 import kotlinx.android.synthetic.main.fragment_pokedex.*
@@ -30,17 +31,14 @@ class PokedexFragment : Fragment() {
         }
     }
 
-    private val listNamesObserver = Observer<List<Forms>>{ list ->
-        list?.let{
-            //listAdapter.updateNameList(it)
-        }
-    }
+//    private val isItemLoadedObserver = Observer<Boolean>{isItemLoaded ->
+//        if(isItemLoaded){
+//
+//        }else{
+//
+//        }
+//    }
 
-    private val listAbilitiesObserver = Observer<List<Abilities>>{ list ->
-        list?.let{
-            //listAdapter.updateAbilitiesList(it)
-        }
-    }
     private val loadingObserver = Observer<Boolean>{isLoading ->
         if(isLoading){
             loading_progressbar.visibility = View.VISIBLE
@@ -77,10 +75,8 @@ class PokedexFragment : Fragment() {
         viewModel = ViewModelProviders.of(this)
             .get(PokedexViewModel::class.java)
 
-        viewModel.pokemonNamesList.observe(this,listNamesObserver )
         viewModel.loading.observe(this,loadingObserver )
         viewModel.loadingError.observe(this, listErrorObserver)
-        viewModel.pokemonAbilitiesList.observe(this,listAbilitiesObserver)
         viewModel.pokemonData.observe(this,pokemonObserver)
         viewModel.refresh(counter)
 
